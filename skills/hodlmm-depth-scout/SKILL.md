@@ -113,6 +113,14 @@ All outputs are JSON to stdout.
 | > 5% | HIGH |
 | Insufficient liquidity | UNFILLABLE |
 
+## Safety notes
+
+- **Read-only** — no wallet required, no transactions submitted.
+- No funds are moved. Safe to run at any frequency.
+- Mainnet only — Bitflow HODLMM pools are mainnet-only.
+- Swap impact estimates are simulations based on current bin reserves. Actual execution may differ due to MEV, concurrent swaps, or price oracle updates.
+- Do not use `avgExecutionPrice` for precise settlement calculations — it requires token decimal normalization not handled here.
+
 ## Known constraints
 
 - Swap impact is bin-walk simulation, not an exact AMM calculation. Treat as an upper-bound estimate.
