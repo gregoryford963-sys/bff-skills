@@ -114,16 +114,17 @@ function handleError(error: unknown): void {
 
 /**
  * Get bin liquidity as a number.
- * Uses the `liquidity` field if available, otherwise sums reserves.
+ * Uses the `liquidity` field if available. Falls back to reserve_x only —
+ * summing reserve_x + reserve_y is dimensionally incorrect for cross-token pools
+ * (e.g. STX/sBTC) where the two reserves have different denominations.
  */
 function binLiquidity(bin: HodlmmBinData): number {
   if (bin.liquidity !== undefined) {
     const liq = Number(bin.liquidity);
     if (!isNaN(liq)) return liq;
   }
-  const rx = parseFloat(bin.reserve_x) || 0;
-  const ry = parseFloat(bin.reserve_y) || 0;
-  return rx + ry;
+  // Use reserve_x as a single-denomination proxy; do not sum cross-token reserves.
+  return parseFloat(bin.reserve_x) || 0;
 }
 
 /**

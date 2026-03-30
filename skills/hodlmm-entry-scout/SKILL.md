@@ -91,7 +91,7 @@ All outputs are JSON to stdout.
 
 | Score | Component | What it measures |
 |-------|-----------|-----------------|
-| Depth score | Liquidity volume in bins ±5 of active | Slippage risk during entry |
+| Depth score | Liquidity volume in bins ±10 of active | Slippage risk during entry |
 | Spread score | Distribution of liquidity across all bins | IL risk (narrow = high IL risk) |
 | Centrality score | Active bin position within distribution | Price momentum (edge = trending away) |
 | Entry score | Weighted composite (40/30/30) | Overall entry quality |
