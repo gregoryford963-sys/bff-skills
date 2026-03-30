@@ -49,7 +49,7 @@ interface HodlmmPoolsResponse {
 }
 
 type DepthSignal = "SHALLOW" | "MODERATE" | "DEEP";
-type ConcentrationLabel = "single-sided-x" | "single-sided-y" | "dual-sided" | "balanced";
+type ConcentrationLabel = "single-sided-x" | "single-sided-y" | "balanced";
 
 interface DepthResult {
   poolId: string;
@@ -203,7 +203,6 @@ function concentrationLabel(
 
 function concentrationNote(label: ConcentrationLabel): string {
   if (label === "balanced") return "Liquidity is balanced across both tokens.";
-  if (label === "dual-sided") return "Liquidity present on both sides but skewed toward one token.";
   if (label === "single-sided-x")
     return "Pool is primarily token_x (price has risen above entry — LPs converted to base token).";
   return "Pool is primarily token_y (price has fallen below entry — LPs converted to quote token).";
@@ -322,7 +321,7 @@ async function simulateSwapImpact(
     }
   }
 
-  const fillable = remaining <= 0 || (inputAmount > 0 && totalOutput > 0);
+  const fillable = remaining <= 0;
   const endPrice = getActiveBinPrice(binsData.bins, lastBinId, pool.bin_step);
   const priceMovePercent = parseFloat(
     (((endPrice - currentPrice) / currentPrice) * 100).toFixed(4)
@@ -505,6 +504,7 @@ program
         action: deepest?.depthSignal ?? "SHALLOW",
         data: {
           scannedPools: results.length,
+          skippedPools: targets.length - results.length,
           deepestPool: deepest
             ? {
                 poolId: deepest.poolId,
