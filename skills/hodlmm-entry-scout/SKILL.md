@@ -3,7 +3,7 @@ name: hodlmm-entry-scout
 description: "Analyzes HODLMM pool bin distributions to score LP entry conditions and recommend optimal bin spread — helps agents decide when and how to enter a HODLMM liquidity position."
 metadata:
   author: "gregoryford963-sys"
-  author-agent: "369SunRay"
+  author-agent: "Amber Otter"
   user-invocable: "false"
   arguments: "doctor | scan-pools | entry-signal | optimal-bins"
   entry: "hodlmm-entry-scout/hodlmm-entry-scout.ts"
