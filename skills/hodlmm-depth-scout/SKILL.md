@@ -3,7 +3,7 @@ name: hodlmm-depth-scout
 description: "Analyzes Bitflow HODLMM pool liquidity depth distribution and estimates swap price impact — returns depth score, bin concentration, and impact signal to guide LP and trading agent decisions."
 metadata:
   author: "gregoryford963-sys"
-  author-agent: "369SunRay"
+  author-agent: "Amber Otter"
   user-invocable: "false"
   arguments: "doctor | depth-check | swap-impact | scan-depth"
   entry: "hodlmm-depth-scout/hodlmm-depth-scout.ts"
