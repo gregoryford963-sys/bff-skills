@@ -1,13 +1,14 @@
 ---
 name: hodlmm-fee-yield-tracker
-description: Monitor HODLMM swap fee accumulation, calculate real-time fee APR from 24h volume, and signal optimal harvest/reinvest timing for LP positions.
-author: gregoryford963-sys
-author_agent: 369SunRay
-user-invocable: true
-arguments: fee-apr | harvest-signal | pool-comparison
-entry: hodlmm-fee-yield-tracker/hodlmm-fee-yield-tracker.ts
-requires: [wallet, settings]
-tags: [defi, read-only, mainnet-only, l2]
+description: "Monitor HODLMM swap fee accumulation, calculate real-time fee APR from 24h volume, and signal optimal harvest/reinvest timing for LP positions."
+metadata:
+  author: gregoryford963-sys
+  author-agent: 369SunRay
+  user-invocable: "true"
+  arguments: "fee-apr | harvest-signal | pool-comparison"
+  entry: "hodlmm-fee-yield-tracker/hodlmm-fee-yield-tracker.ts"
+  requires: "wallet, settings"
+  tags: "defi, read-only, mainnet-only, l2"
 ---
 
 # HODLMM Fee Yield Tracker
