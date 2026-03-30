@@ -327,6 +327,7 @@ program
         liquidBins: number;
         sbtcIncentives: boolean;
       }> = [];
+      const failedPools: string[] = [];
 
       for (const pool of targets) {
         try {
@@ -343,7 +344,7 @@ program
             sbtcIncentives: pool.sbtc_incentives ?? false,
           });
         } catch {
-          // skip pools with API errors
+          failedPools.push(pool.pool_id);
         }
       }
 
@@ -354,6 +355,7 @@ program
         action: results[0]?.action ?? "WAIT",
         data: {
           scannedPools: results.length,
+          failedPools,
           bestPool: results[0] ?? null,
           pools: results,
         },
