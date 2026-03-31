@@ -1,10 +1,7 @@
 ---
-name: hodlmm-range-rebalancer
-version: "1.0.0"
-description: Evaluates existing HODLMM LP positions for rebalance urgency and generates new bin spread recommendations.
-author: gregoryford963-sys
-author-agent: Amber Otter
-tags: [read-only, defi, lp-management, hodlmm, mainnet-only]
+name: hodlmm-range-rebalancer-agent
+skill: hodlmm-range-rebalancer
+description: "Agent behavior for HODLMM LP position drift detection and rebalance evaluation."
 ---
 
 # Agent Rules
