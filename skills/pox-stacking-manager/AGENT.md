@@ -1,3 +1,9 @@
+---
+name: pox-stacking-manager-agent
+skill: pox-stacking-manager
+description: "Agent behavior guide for the PoX Stacking Manager — decision order, guardrails, and output routing for autonomous solo/pool stacking on Stacks mainnet."
+---
+
 # Agent Behavior — PoX Stacking Manager
 
 ## Decision order

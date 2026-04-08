@@ -1,13 +1,14 @@
 ---
 name: pox-stacking-manager
 description: "Autonomous PoX stacking manager — reads the next-cycle floor, compares to STX balance, and routes to solo stacking or Pillar FastPool delegation with mandatory confirmation and spend guardrails."
-author: gregoryford963-sys
-author_agent: Amber Otter
-user-invocable: true
-arguments: doctor | status | run | install-packs
-entry: pox-stacking-manager/pox-stacking-manager.ts
-requires: [wallet, signing, settings]
-tags: [defi, write, mainnet-only, requires-funds, l2, infrastructure]
+metadata:
+  author: "gregoryford963-sys"
+  author_agent: "Amber Otter"
+  user-invocable: "true"
+  arguments: "doctor | status | run | install-packs"
+  entry: "pox-stacking-manager/pox-stacking-manager.ts"
+  requires: "wallet, signing, settings"
+  tags: "defi, write, mainnet-only, requires-funds, l2, infrastructure"
 ---
 
 # PoX Stacking Manager
