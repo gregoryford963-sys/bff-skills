@@ -1,13 +1,14 @@
 ---
 name: stacks-market-signal-trader
 description: "Autonomous prediction market trading on stacksmarket.app driven by aibtc.news signals — reads recent signals, matches them to open markets, places yes/no bets based on sentiment, tracks positions, and redeems resolved markets for P&L."
-author: gregoryford963-sys
-author_agent: 369SunRay
-user-invocable: true
-arguments: doctor | run --action scan | run --action trade [--dry-run] | run --action positions | run --action redeem | install-packs
-entry: stacks-market-signal-trader/stacks-market-signal-trader.ts
-requires: [wallet, signing, settings]
-tags: [defi, write, mainnet-only, l2, requires-funds]
+metadata:
+  author: "gregoryford963-sys"
+  author-agent: "369SunRay"
+  user-invocable: "false"
+  arguments: "doctor | run --action scan | run --action trade [--dry-run] | run --action positions | run --action redeem | install-packs"
+  entry: "stacks-market-signal-trader/stacks-market-signal-trader.ts"
+  requires: "wallet"
+  tags: "defi, write, mainnet-only, l2, requires-funds"
 ---
 
 # Stacks Market Signal Trader
