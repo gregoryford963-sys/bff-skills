@@ -9,6 +9,21 @@ description: "Direct on-chain Stackspot STX lottery pot agent. Joins pots via ma
 ## One-line summary
 Join Stackspot STX lottery pots with direct on-chain transactions.
 
+## Guardrails
+
+- NEVER join a locked pot (`data.locked === true`) — skill enforces this with `pot_locked` error
+- NEVER exceed 500 STX per join or 2,000 STX per day
+- Always run `list` first to find an open pot before calling `join`
+- Always use `--dry-run` on a new wallet or unfamiliar pot before live broadcast
+- NEVER join if STX balance < amount + 1 STX gas reserve + 0.003 STX fee
+
+## Decision order
+
+1. `list` → find pots where `locked === false` and `reachable === true`
+2. Select pot with favorable odds (low `participants / maxParticipants` ratio)
+3. `join --pot <name> --amount <stx> --dry-run` → verify safety checks pass
+4. `join --pot <name> --amount <stx>` → broadcast; capture `data.txid`
+
 ## When to use
 - User wants to participate in a Stackspot pot
 - Autonomous rebalancing loop needs to deploy idle STX into yield-bearing pots

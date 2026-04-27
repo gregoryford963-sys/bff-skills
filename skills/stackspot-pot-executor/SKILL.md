@@ -15,6 +15,19 @@ metadata:
 
 Direct on-chain Stackspot pot participation for autonomous agents.
 
+## Why agents need it
+
+Stackspot pots offer lottery-style STX yield with a small number of participants and a fixed minimum entry. The existing `stackspot-skill` (PR #513) outputs MCP params for a parent agent to relay the join. This skill calls `join-pot(amount: uint)` directly on-chain and returns the confirmed `txid` — no relay required.
+
+The low participant count on Genesis (max 2) means a depositor has a 50% chance of winning the entire pot, making timing and direct execution critical.
+
+## Safety notes
+
+- Post-condition on every join: `Pc.principal(wallet).willSendEq(amount).ustx()` — transaction aborts on-chain if the wrong amount leaves the wallet.
+- Phase check: pot must be unlocked (`is-locked === false`) or the join is rejected with `pot_locked`.
+- Per-op cap: 500 STX. Daily cap: 2,000 STX. Gas reserve: 1 STX always kept.
+- Mainnet only — Stackspot contracts are mainnet-only.
+
 ## What it does
 
 Joins Stackspot STX lottery pots by broadcasting `join-pot` transactions directly via `@stacks/transactions`. No MCP delegation — every write call is broadcast on-chain from this skill.
@@ -65,23 +78,37 @@ bun run stackspot-pot-executor.ts join --pot STXLFG --amount 21
 | Gas reserve | 1 STX kept post-join |
 | TX fee | 0.003 STX |
 
-## Output format
+## Output contract
 
-All output is newline-delimited JSON:
+All outputs are JSON to stdout.
 
+**Success (join):**
 ```json
 {
   "status": "success",
   "action": "joined",
   "data": {
     "pot": "STXLFG",
+    "contract": "SPT4SQP5RC1BFAJEQKBHZMXQ8NQ7G118F335BD85.STXLFG",
     "txid": "abc123...",
     "explorer_url": "https://explorer.hiro.so/txid/0xabc123?chain=mainnet",
     "amount_stx": 21,
-    "amount_ustx": 21000000
+    "amount_ustx": 21000000,
+    "wallet": "SP...",
+    "safety_checks": {}
   },
   "error": null
 }
+```
+
+**Blocked:**
+```json
+{ "status": "blocked", "action": "pot_locked", "data": null, "error": { "code": "pot_locked", "message": "...", "next": "..." } }
+```
+
+**Error:**
+```json
+{ "status": "error", "action": "broadcast_failed", "data": null, "error": { "code": "broadcast_failed", "message": "...", "next": "..." } }
 ```
 
 ## Dependencies
