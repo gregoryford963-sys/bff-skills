@@ -9,6 +9,21 @@ description: "Direct on-chain JingSwap STX auction deposit agent. Deposits STX i
 ## One-line summary
 Deposit STX into JingSwap blind batch auctions with direct on-chain transactions.
 
+## Guardrails
+
+- NEVER deposit in Phase 1 or Phase 2 — skill enforces this and returns `deposits_closed`
+- NEVER deposit if `data.total_sbtc_deposited_sats === 0` — no sBTC means no settlement counterparty
+- NEVER exceed 5,000 STX per operation or 20,000 STX per day
+- Always run `status` first to verify phase before depositing
+- Always use `--dry-run` before live broadcast on a new wallet or amount
+
+## Decision order
+
+1. `status` → check `data.accepting_deposits` (must be `true`) and `data.total_sbtc_deposited_sats` (must be > 0)
+2. `deposit --amount <stx> --dry-run` → verify safety checks pass
+3. `deposit --amount <stx>` → broadcast; capture `data.txid`
+4. If phase changes to 1 or 2 while deposit is pending: do NOT cancel — await settlement
+
 ## When to use
 - Agent wants to exchange idle STX for sBTC via JingSwap's oracle-priced batch settlement
 - Rebalancing loop detects STX oversupply and wants to acquire sBTC at oracle price

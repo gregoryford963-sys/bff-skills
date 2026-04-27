@@ -15,6 +15,18 @@ metadata:
 
 Direct on-chain JingSwap STX→sBTC blind batch auction depositor.
 
+## Why agents need it
+
+JingSwap auctions settle at the live Pyth BTC/STX oracle price — not an AMM curve — giving agents oracle-priced sBTC acquisition without slippage or front-running. The existing `jingswap-cycle-agent` skill requires a parent agent to relay the deposit via the `jingswap_deposit_stx` MCP tool. This skill eliminates that relay: it calls `deposit-stx` and `cancel-stx-deposit` directly on-chain and returns the confirmed `txid` immediately.
+
+## Safety notes
+
+- `deposit` requires Phase 0 (deposit window) — rejected in Phase 1 or 2 with a `deposits_closed` error.
+- Post-condition on every deposit: `Pc.principal(wallet).willSendEq(amount).ustx()` — transaction aborts on-chain if the wrong amount leaves the wallet.
+- Per-op cap: 5,000 STX. Daily cap: 20,000 STX. Gas reserve: 1 STX always kept.
+- `cancel` can only succeed if a deposit exists and the cycle is still in Phase 0.
+- Mainnet only — `sbtc-stx-jing-v2` is mainnet-only.
+
 ## What it does
 
 Participates in JingSwap's STX/sBTC blind batch auctions by broadcasting `deposit-stx` and `cancel-stx-deposit` transactions directly via `@stacks/transactions`. No MCP relay — every write call goes on-chain from this process.
@@ -73,8 +85,11 @@ bun run jingswap-stx-depositor.ts cancel
 | TX fee | 0.003 STX |
 | Post-condition | `Pc.principal(wallet).willSendEq(amount).ustx()` — aborts if wrong amount leaves wallet |
 
-## Output format
+## Output contract
 
+All outputs are newline-delimited JSON to stdout.
+
+**Success (deposit):**
 ```json
 {
   "status": "success",
@@ -83,10 +98,23 @@ bun run jingswap-stx-depositor.ts cancel
     "txid": "abc123...",
     "explorer_url": "https://explorer.hiro.so/txid/0xabc123?chain=mainnet",
     "amount_stx": 100,
-    "cycle": 42
+    "amount_ustx": 100000000,
+    "cycle": 42,
+    "wallet": "SP...",
+    "safety_checks": {}
   },
   "error": null
 }
+```
+
+**Blocked:**
+```json
+{ "status": "blocked", "action": "deposits_closed", "data": null, "error": { "code": "deposits_closed", "message": "...", "next": "..." } }
+```
+
+**Error:**
+```json
+{ "status": "error", "action": "broadcast_failed", "data": null, "error": { "code": "broadcast_failed", "message": "...", "next": "..." } }
 ```
 
 ## Dependencies
