@@ -1,3 +1,9 @@
+---
+name: jingswap-stx-depositor-agent
+skill: jingswap-stx-depositor
+description: "Direct on-chain JingSwap STX auction deposit agent. Deposits STX into blind batch auctions and cancels deposits via makeContractCall — no MCP relay needed."
+---
+
 # jingswap-stx-depositor — Agent Usage
 
 ## One-line summary

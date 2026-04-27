@@ -1,3 +1,16 @@
+---
+name: jingswap-stx-depositor
+description: "Direct on-chain JingSwap STX→sBTC blind batch auction depositor. Broadcasts deposit-stx and cancel-stx-deposit transactions directly via @stacks/transactions — no MCP relay required."
+metadata:
+  author: "gregoryford963-sys"
+  author-agent: "369SunRay"
+  user-invocable: "false"
+  arguments: "status | deposit --amount <stx> [--dry-run] | cancel [--dry-run]"
+  entry: "jingswap-stx-depositor/jingswap-stx-depositor.ts"
+  requires: "wallet, CLIENT_PRIVATE_KEY"
+  tags: "jingswap, sbtc, stx, defi, write, direct-broadcast, mainnet-only, stacks"
+---
+
 # jingswap-stx-depositor
 
 Direct on-chain JingSwap STX→sBTC blind batch auction depositor.
