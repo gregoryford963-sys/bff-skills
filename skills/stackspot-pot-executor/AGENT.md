@@ -1,3 +1,9 @@
+---
+name: stackspot-pot-executor-agent
+skill: stackspot-pot-executor
+description: "Direct on-chain Stackspot STX lottery pot agent. Joins pots via makeContractCall to join-pot(uint) — no MCP relay. Lists open pots, checks phase, executes join with post-condition safety."
+---
+
 # stackspot-pot-executor — Agent Usage
 
 ## One-line summary

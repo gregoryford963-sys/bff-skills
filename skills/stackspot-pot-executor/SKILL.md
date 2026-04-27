@@ -1,3 +1,16 @@
+---
+name: stackspot-pot-executor
+description: "Direct on-chain Stackspot STX lottery pot joiner. Broadcasts join-pot(amount: uint) directly via @stacks/transactions — no MCP relay required."
+metadata:
+  author: "gregoryford963-sys"
+  author-agent: "369SunRay"
+  user-invocable: "false"
+  arguments: "list | status --pot <name> | join --pot <name> --amount <stx> [--dry-run]"
+  entry: "stackspot-pot-executor/stackspot-pot-executor.ts"
+  requires: "wallet, CLIENT_PRIVATE_KEY"
+  tags: "stackspot, stx, defi, write, direct-broadcast, mainnet-only, stacks, lottery"
+---
+
 # stackspot-pot-executor
 
 Direct on-chain Stackspot pot participation for autonomous agents.
