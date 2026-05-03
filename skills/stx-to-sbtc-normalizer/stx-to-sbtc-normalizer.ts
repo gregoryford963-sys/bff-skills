@@ -27,8 +27,6 @@ const BITFLOW_API_HOST = process.env.BITFLOW_API_HOST || "https://api.bitflowapi
 const WALLETS_FILE     = path.join(os.homedir(), ".aibtc", "wallets.json");
 const WALLETS_DIR      = path.join(os.homedir(), ".aibtc", "wallets");
 
-const STX_TOKEN_ID     = "token-stx";
-const SBTC_TOKEN_ID    = "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.wrapped-bitcoin";
 const STX_DECIMALS     = 6;
 const SBTC_DECIMALS    = 8;
 
@@ -36,7 +34,7 @@ const GAS_RESERVE_STX  = 1;       // always keep 1 STX for gas
 const MAX_SLIPPAGE_PCT = 10;       // hard cap
 const MAX_PRICE_IMPACT = 0.05;     // 5% price impact gate
 const QUOTE_MAX_AGE_MS = 30_000;   // 30s staleness gate
-const TX_FEE_USTX      = 10_000n;  // 0.01 STX — conservative fee
+const TX_FEE_USTX      = 50_000n;  // 0.05 STX — sufficient for multi-hop Bitflow routes
 
 // ─── Output helpers ───────────────────────────────────────────────────────────
 
@@ -267,15 +265,15 @@ async function cmdDoctor(): Promise<void> {
   success("doctor", { ok: allOk, checks });
 }
 
-async function cmdStatus(): Promise<void> {
-  const directKey = process.env.CLIENT_PRIVATE_KEY || process.env.STACKS_PRIVATE_KEY;
-  if (!directKey) {
-    fail("NO_WALLET", "Set CLIENT_PRIVATE_KEY or STACKS_PRIVATE_KEY env var for status");
+async function cmdStatus(opts: { walletPassword?: string }): Promise<void> {
+  let walletKeys: { stxPrivateKey: string; stxAddress: string };
+  try {
+    walletKeys = await getWalletKeys(opts.walletPassword || process.env.AIBTC_WALLET_PASSWORD || "");
+  } catch (e: any) {
+    fail("NO_WALLET", e.message, "Set CLIENT_PRIVATE_KEY env var or provide --wallet-password");
     return;
   }
-
-  const { getAddressFromPrivateKey } = await import("@stacks/transactions" as any);
-  const address   = getAddressFromPrivateKey(directKey, "mainnet");
+  const { stxAddress: address } = walletKeys;
   const microStx  = await getStxBalanceMicro(address);
   const stxTotal  = microStx / 1e6;
   const sbtcSats  = await getSbtcBalanceSats(address);
@@ -402,14 +400,8 @@ async function cmdRun(opts: {
   const { STACKS_MAINNET } = await import("@stacks/network" as any);
 
   const slippageDecimal = slippage / 100;
-  const quoteResult = await sdk.getQuoteForRoute(ids.stxId, ids.sbtcId, amountStx);
-  if (!quoteResult?.bestRoute?.route) {
-    fail("NO_ROUTE", "Route disappeared between quote and execution", "retry");
-    return;
-  }
-
   const swapParams = await sdk.prepareSwap(
-    { route: quoteResult.bestRoute.route, amount: amountStx, tokenXDecimals: STX_DECIMALS, tokenYDecimals: SBTC_DECIMALS },
+    { route: quote.route, amount: amountStx, tokenXDecimals: STX_DECIMALS, tokenYDecimals: SBTC_DECIMALS },
     stxAddress,
     slippageDecimal
   );
@@ -467,8 +459,9 @@ program
 program
   .command("status")
   .description("Show current STX/sBTC balances and swap quote preview")
-  .action(async () => {
-    try { await cmdStatus(); }
+  .option("--wallet-password <pw>", "Wallet decrypt password — prefer AIBTC_WALLET_PASSWORD env var")
+  .action(async (opts) => {
+    try { await cmdStatus(opts); }
     catch (e: any) { fail("STATUS_ERROR", e.message, "check environment"); }
   });
 
@@ -478,7 +471,7 @@ program
   .option("--amount <stx>", "STX amount to swap (default: all swappable STX after gas reserve)")
   .option("--slippage <pct>", "Slippage tolerance percent (default 3, max 10)", "3")
   .option("--confirm", "Required to broadcast — omit for quote preview only")
-  .option("--wallet-password <pw>", "Wallet decrypt password (prefer AIBTC_WALLET_PASSWORD env var)")
+  .option("--wallet-password <pw>", "Wallet decrypt password — prefer AIBTC_WALLET_PASSWORD env var (CLI arg is visible in process list)")
   .action(async (opts) => {
     try { await cmdRun(opts); }
     catch (e: any) { fail("RUN_ERROR", e.message, "check environment and try again"); }
